@@ -11,13 +11,10 @@ import (
 	"os"
 	"time"
 )
-// win hammer cage rifle myself husband someone ozone online impact episode hold // ganache mnemonic
-//	client, err := ethclient.Dial("https://mainnet.infura.io/v3/18c3159c1f8b4dc591a3083c2afdc240") // my infura api
-// client, err := ethclient.Dial("http://localhost:8545") // localhost
-// client, err := ethclient.Dial("https://rinkeby.infura.io/v3/18c3159c1f8b4dc591a3083c2afdc240") // rinkeby
-// client, err := ethclient.Dial("wss://mainnet.infura.io/ws/v3/18c3159c1f8b4dc591a3083c2afdc240") // mainnet wss
+
 func main() {
-	client, err := ethclient.Dial("https://rinkeby.infura.io/v3/18c3159c1f8b4dc591a3083c2afdc240") // rinkeby
+	rinkebyurl := accessories.GoDotEnvVariable("rinkeby")
+	client, err := ethclient.Dial(rinkebyurl) // rinkeby
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,8 +34,6 @@ func main() {
 	//txhash, err := transactions.TestToken(client)
 	//fmt.Println("Yay our Tx hash is:", txhash)
 
-
-
 	//myWallet := loadCreateWallet(client)
 
 	//success, err := transactions.SendTokenFlow(client)
@@ -47,13 +42,6 @@ func main() {
 	//}else{
 	//	log.Fatal(err)
 	//}
-
-
-
-
-
-
-
 
 }
 
@@ -87,4 +75,3 @@ func clientKeyStore() {
 		log.Fatal(err)
 	}
 }
-
