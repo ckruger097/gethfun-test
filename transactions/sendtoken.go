@@ -67,7 +67,7 @@ func TestToken(client *ethclient.Client) (string, error) {
 	// unlock keystore
 	fmt.Println("What's the password?")
 	userPass := accessories.UserInputLine()
-	auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(key)), userPass, chainId) // 12C4MwQm9fz1D1FAF7gXrvC5
+	auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(key)), userPass, chainId) 
 	if err != nil {
 		log.Fatal(err)
 	}
