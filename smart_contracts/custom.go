@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"gethfun/accessories"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -20,7 +21,8 @@ import (
 // 4. if hash == hash, deposit allotted amount into recipient address
 
 func DeployEthCheck(client *ethclient.Client, passphrase string, value *big.Float) {
-	privateKey, err := crypto.HexToECDSA("5cdd771d2e0af548c308d4740d12cfb523a51be2f34ef839e7e3a960297df5fb")
+	goenvprivkey := accessories.GoDotEnvVariable("privkey")
+	privateKey, err := crypto.HexToECDSA(goenvprivkey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,12 +52,5 @@ func DeployEthCheck(client *ethclient.Client, passphrase string, value *big.Floa
 	keyBytes := []byte(passphrase)
 	encryptedKey := crypto.Keccak256Hash(keyBytes)
 	fmt.Println(encryptedKey)
-	//address, tx, instance, err := store.DeployStore(auth, client, input)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//fmt.Println("address is:", address)
-	//fmt.Println("tx hash is:", tx.Hash().Hex())
-	//_ = instance
 
 }

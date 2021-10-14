@@ -14,8 +14,9 @@ import (
 	"math/big"
 )
 
-func CreateRawTx(client *ethclient.Client) ([]byte, error){
-	privateKey, err := crypto.HexToECDSA("5cdd771d2e0af548c308d4740d12cfb523a51be2f34ef839e7e3a960297df5fb")
+func CreateRawTx(client *ethclient.Client) ([]byte, error) {
+	privkeydotenv := accessories.GoDotEnvVariable("privkey")
+	privateKey, err := crypto.HexToECDSA(privkeydotenv)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +36,8 @@ func CreateRawTx(client *ethclient.Client) ([]byte, error){
 	if err != nil {
 		log.Fatal(err)
 	}
-	toAddress := common.HexToAddress("0x546E6aD2e7AA8C047AE5D022D183c5918D7b158B")
+	addressdotenv := accessories.GoDotEnvVariable("address")
+	toAddress := common.HexToAddress(addressdotenv)
 	var data []byte
 	tx := types.NewTx(&types.LegacyTx{
 		Nonce:    nonce,

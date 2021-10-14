@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"gethfun/accessories"
 	store "gethfun/build"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -21,7 +22,8 @@ func QuerySmartContract(instance *store.Store) {
 }
 
 func WriteToSmartContract(client *ethclient.Client, instance *store.Store, key string, value string) {
-	privateKey, err := crypto.HexToECDSA("5cdd771d2e0af548c308d4740d12cfb523a51be2f34ef839e7e3a960297df5fb")
+	goenvprivkey := accessories.GoDotEnvVariable("privkey")
+	privateKey, err := crypto.HexToECDSA(goenvprivkey)
 	if err != nil {
 		log.Fatal(err)
 	}

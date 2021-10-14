@@ -20,8 +20,7 @@ func GetCommonAddress(givenAddr string) common.Address {
 func ValidEthAddress(givenAddr string) bool {
 	re := regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 	return re.MatchString(givenAddr)
-	//fmt.Println("is 0x323b5d4c32345ced77393b3530b1eed0f346429d a valid address?", checkIfValid("0x323b5d4c32345ced77393b3530b1eed0f346429d")) // true
-	//fmt.Println("is 0xZYXb5d4c32345ced77393b3530b1eed0f346429d a valid address?", checkIfValid("0xZYXb5d4c32345ced77393b3530b1eed0f346429d")) // false
+
 }
 
 func ValidSmartContract(client *ethclient.Client, addressString string) {
@@ -35,5 +34,3 @@ func ValidSmartContract(client *ethclient.Client, addressString string) {
 
 	fmt.Printf("is contract: %v\n", isContract) // is contract: ??
 }
-
-

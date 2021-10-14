@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
+	"gethfun/accessories"
 	store "gethfun/build"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -14,7 +15,8 @@ import (
 )
 
 func DeploySmartContract(client *ethclient.Client) {
-	privateKey, err := crypto.HexToECDSA("5cdd771d2e0af548c308d4740d12cfb523a51be2f34ef839e7e3a960297df5fb")
+	goenvprivkey := accessories.GoDotEnvVariable("privkey")
+	privateKey, err := crypto.HexToECDSA(goenvprivkey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,7 +54,7 @@ func DeploySmartContract(client *ethclient.Client) {
 	_ = instance
 }
 
-func LoadSmartContract(client *ethclient.Client) (*store.Store, error){
+func LoadSmartContract(client *ethclient.Client) (*store.Store, error) {
 	address := common.HexToAddress("0x117ABa9975E5CD6d234add4ee3CF42bD9f219978") // the addr you get from deploy
 	instance, err := store.NewStore(address, client)
 	if err != nil {
