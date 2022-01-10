@@ -9,11 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/metachris/eth-go-bindings/erc20"
-	"io/ioutil"
 	"log"
 	"math/big"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -43,38 +40,30 @@ func TestToken(client *ethclient.Client) (string, error) {
 		return "", fmt.Errorf("user responded incorrect token")
 	}
 	// choose keystore file
-	fmt.Println("Files currently in keystore:")
-	var files []string
-	root := "./keystores"
-	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		files = append(files, path)
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, file := range files {
-		fmt.Println(file)
-	}
-	fmt.Println("Which keystore do you want to unlock?")
-	fileName := accessories.UserInputLine()
-	file := fmt.Sprintf("./keystores/%s", fileName)
-	key, err := ioutil.ReadFile(file)
+	//fileName := accessories.UserInputLine()
+	//file := fmt.Sprintf("./keystores/%s", fileName)
+	//key, err := ioutil.ReadFile(file)
 	chainId, err := client.NetworkID(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
 	// unlock keystore
-	fmt.Println("What's the password?")
+	acc, ks, err := accounts.GetAccountAndKs()
+	fmt.Println("What's the password (sending Tx)")
 	userPass := accessories.UserInputLine()
-	auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(key)), userPass, chainId) 
+	err = ks.Unlock(acc, userPass)
+	if err != nil {
+		return "", err
+	}
+	auth, err := bind.NewKeyStoreTransactorWithChainID(ks, acc, chainId)
+	//auth, err := bind.NewTransactorWithChainID(strings.NewReader(string(key)), userPass, chainId)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// get address of receiver
 	fmt.Println("Enter the address of the token receiver:")
 	userReceiverAddress := accessories.UserInputLine()
-	if !accounts.ValidEthAddress(userReceiverAddress){
+	if !accounts.ValidEthAddress(userReceiverAddress) {
 		log.Fatal("invalid eth address")
 	}
 	// enter value
@@ -94,7 +83,10 @@ func TestToken(client *ethclient.Client) (string, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("transfer pending: 0x%x\n", tx.Hash())
+	fmt.Printf("transfer pending: https://rinkeby.etherscan.io/tx/0x%x\n", tx.Hash())
+	err = ks.Lock(acc.Address)
+	if err != nil {
+		return "", err
+	}
 	return tx.Hash().Hex(), nil
 }
-

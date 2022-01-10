@@ -2,7 +2,6 @@ package accounts
 
 import (
 	"context"
-	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
@@ -23,7 +22,7 @@ func ValidEthAddress(givenAddr string) bool {
 
 }
 
-func ValidSmartContract(client *ethclient.Client, addressString string) {
+func ValidSmartContract(client *ethclient.Client, addressString string) bool {
 	address := common.HexToAddress(addressString)
 	bytecode, err := client.CodeAt(context.Background(), address, nil) // nil is latest block
 	if err != nil {
@@ -31,6 +30,6 @@ func ValidSmartContract(client *ethclient.Client, addressString string) {
 	}
 
 	isContract := len(bytecode) > 0
-
-	fmt.Printf("is contract: %v\n", isContract) // is contract: ??
+	//fmt.Printf("is contract: %v\n", isContract) // is contract: ??
+	return isContract
 }

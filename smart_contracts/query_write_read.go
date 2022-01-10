@@ -7,6 +7,7 @@ import (
 	"gethfun/accessories"
 	store "gethfun/build"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
@@ -21,7 +22,7 @@ func QuerySmartContract(instance *store.Store) {
 	fmt.Println("Your version of Store is:", version)
 }
 
-func WriteToSmartContract(client *ethclient.Client, instance *store.Store, key string, value string) {
+func WriteToSmartContract(client *ethclient.Client, instance *store.Store, key string, value string) (*types.Transaction, error) {
 	goenvprivkey := accessories.GoDotEnvVariable("privkey")
 	privateKey, err := crypto.HexToECDSA(goenvprivkey)
 	if err != nil {
@@ -48,7 +49,7 @@ func WriteToSmartContract(client *ethclient.Client, instance *store.Store, key s
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
 	auth.Nonce = big.NewInt(int64(nonce))
 	auth.Value = big.NewInt(0)
-	auth.GasLimit = uint64(1000000) // gas price increased, idk what limit is now but gas used was >300k see https://rinkeby.etherscan.io/tx/0xa26c63f190ccbf7e1a59efa85ba38554056f5760dfe42bef1229fbff00d79718
+	auth.GasLimit = uint64(1000000) // gas price increased
 	auth.GasPrice = gasPrice
 	// store has a keystore method, but it's in byte32. we create our key and value here.
 	keyBytes := [32]byte{}
@@ -60,16 +61,18 @@ func WriteToSmartContract(client *ethclient.Client, instance *store.Store, key s
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("tx sent: %x", tx.Hash())
+	fmt.Printf("tx sent: https://rinkeby.etherscan.io/tx/%s\n", tx.Hash().Hex())
+	return tx, nil
 
 }
 
-func ReadSmartContract(instance *store.Store, key string) {
+func ReadSmartContract(instance *store.Store, key string) (string, error) {
 	keyBytes := [32]byte{}
 	copy(keyBytes[:], key)
 	result, err := instance.Items(nil, keyBytes)
 	if err != nil {
 		log.Fatal(err)
+		return "", err
 	}
-	fmt.Println(string(result[:]))
+	return string(result[:]), nil
 }

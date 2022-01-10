@@ -11,22 +11,22 @@ import (
 )
 
 type EthWallet struct {
-	walletName		string
-	privateKey   	[]byte
-	publicKey     []byte
+	WalletName    string
+	PrivateKey    []byte
+	PublicKey     []byte
 	WalletAddress string
-	balance       AddressBalance
+	Balance       AddressBalance
 }
 
 func LoadWallet(privKey string) EthWallet {
 	var newWallet EthWallet
 	// TODO: database? or else walletname is kinda useless
-	newWallet.walletName = "wallet"
+	newWallet.WalletName = "wallet"
 	privateKeyBytes, err := hexutil.Decode(privKey)
 	if err != nil {
 		log.Fatal(err)
 	}
-	newWallet.privateKey = privateKeyBytes
+	newWallet.PrivateKey = privateKeyBytes
 	privateKey, err := crypto.ToECDSA(privateKeyBytes)
 	if err != nil {
 		log.Fatal("couldn't decode private key")
@@ -37,7 +37,7 @@ func LoadWallet(privKey string) EthWallet {
 	}
 	// convert pubkey to byte form
 	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
-	newWallet.publicKey = publicKeyBytes
+	newWallet.PublicKey = publicKeyBytes
 	// address assignment
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 	newWallet.WalletAddress = address
@@ -51,12 +51,12 @@ func GenerateWallet(newWalletName string) EthWallet {
 	if err != nil {
 		log.Fatal(err)
 	}
-	newWallet.walletName = newWalletName
-	fmt.Println("Your new wallet name will be:", newWallet.walletName)
+	newWallet.WalletName = newWalletName
+	fmt.Println("Your new wallet name will be:", newWallet.WalletName)
 	// converts it to bytes
 	privateKeyBytes := crypto.FromECDSA(privateKey)
-	newWallet.privateKey = privateKeyBytes
-	fmt.Println("Your private key is:", hexutil.Encode(newWallet.privateKey))
+	newWallet.PrivateKey = privateKeyBytes
+	fmt.Println("Your private key is:", hexutil.Encode(newWallet.PrivateKey))
 	// pull out pubkey from privkey
 	publicKeyECDSA, ok := privateKey.Public().(*ecdsa.PublicKey)
 	if !ok {
@@ -64,8 +64,8 @@ func GenerateWallet(newWalletName string) EthWallet {
 	}
 	// convert pubkey to byte form
 	publicKeyBytes := crypto.FromECDSAPub(publicKeyECDSA)
-	newWallet.publicKey = publicKeyBytes
-	fmt.Println("Public key is:", hexutil.Encode(newWallet.publicKey))
+	newWallet.PublicKey = publicKeyBytes
+	fmt.Println("Public key is:", hexutil.Encode(newWallet.PublicKey))
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 	newWallet.WalletAddress = address
 	fmt.Println("Address to that public key is:", address)

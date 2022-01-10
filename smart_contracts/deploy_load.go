@@ -14,7 +14,7 @@ import (
 	"math/big"
 )
 
-func DeploySmartContract(client *ethclient.Client) {
+func DeploySmartContract(version string, client *ethclient.Client) {
 	goenvprivkey := accessories.GoDotEnvVariable("privkey")
 	privateKey, err := crypto.HexToECDSA(goenvprivkey)
 	if err != nil {
@@ -41,11 +41,10 @@ func DeploySmartContract(client *ethclient.Client) {
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, chainID)
 	auth.Nonce = big.NewInt(int64(nonce))
 	auth.Value = big.NewInt(0)
-	auth.GasLimit = uint64(900000) // gas price increased, idk what limit is now but gas used was >300k see https://rinkeby.etherscan.io/tx/0xa26c63f190ccbf7e1a59efa85ba38554056f5760dfe42bef1229fbff00d79718
+	auth.GasLimit = uint64(900000) // gas price increased,
 	auth.GasPrice = gasPrice
 
-	input := "1.0"
-	address, tx, instance, err := store.DeployStore(auth, client, input)
+	address, tx, instance, err := store.DeployStore(auth, client, version)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,8 +53,8 @@ func DeploySmartContract(client *ethclient.Client) {
 	_ = instance
 }
 
-func LoadSmartContract(client *ethclient.Client) (*store.Store, error) {
-	address := common.HexToAddress("0x117ABa9975E5CD6d234add4ee3CF42bD9f219978") // the addr you get from deploy
+func LoadSmartContract(client *ethclient.Client, contractAddress string) (*store.Store, error) {
+	address := common.HexToAddress(contractAddress) // the addr you get from deploy
 	instance, err := store.NewStore(address, client)
 	if err != nil {
 		log.Fatal(err)

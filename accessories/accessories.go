@@ -61,11 +61,11 @@ func WeiToEther(wei *big.Int) *big.Float {
 
 func GoDotEnvVariable(key string) string {
 
-	// load .env file
-	err := godotenv.Load(".env")
+	// load creds.env file
+	err := godotenv.Load("creds.env")
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatalf("Error loading creds.env file")
 	}
 
 	return os.Getenv(key)

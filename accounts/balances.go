@@ -13,8 +13,8 @@ import (
 
 type AddressBalance struct {
 	rawBalance *big.Int
-	ethBalance *big.Float
-	balanceUSD float64
+	EthBalance *big.Float
+	BalanceUSD float64
 }
 
 func GetAddressBalance(client *ethclient.Client, addy common.Address) AddressBalance {
@@ -26,10 +26,10 @@ func GetAddressBalance(client *ethclient.Client, addy common.Address) AddressBal
 	}
 	fbalance := new(big.Float)
 	fbalance.SetString(addrBal.rawBalance.String())
-	addrBal.ethBalance = new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
-	ebfl, _ := addrBal.ethBalance.Float64()
+	addrBal.EthBalance = new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
+	ebfl, _ := addrBal.EthBalance.Float64()
 	epfl, _ := getEthPrice().Float64()
-	addrBal.balanceUSD = ebfl * epfl
+	addrBal.BalanceUSD = ebfl * epfl
 
 	return addrBal
 }
@@ -45,7 +45,7 @@ func getEthPrice() *big.Float {
 
 func PrintBalanceInfo(client *ethclient.Client, address common.Address) {
 	addressBalance := GetAddressBalance(client, address)
-	fmt.Println("Your raw balance is:",addressBalance.rawBalance)
-	fmt.Println("Your value is:", addressBalance.ethBalance,"ETH")
-	fmt.Println("This balance is currently worth:$",addressBalance.balanceUSD,"USD")
+	fmt.Println("Your raw Balance is:", addressBalance.rawBalance)
+	fmt.Println("Your value is:", addressBalance.EthBalance, "ETH")
+	fmt.Println("This Balance is currently worth:$", addressBalance.BalanceUSD, "USD")
 }

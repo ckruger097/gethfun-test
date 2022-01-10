@@ -30,7 +30,7 @@ func CreateRawTx(client *ethclient.Client) ([]byte, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	value := accessories.EtherToWei(big.NewFloat(0.69))
+	value := accessories.EtherToWei(big.NewFloat(0.01))
 	gasLimit := uint64(21000)
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {

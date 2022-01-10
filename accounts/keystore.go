@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func CreateKs(newPassword string) (accounts.Account, error) {
@@ -23,10 +24,11 @@ func CreateKs(newPassword string) (accounts.Account, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	//am := accounts.NewManager(&accounts.Config{InsecureUnlockAllowed: false}, ks)
 	return account, nil
 }
 
-func ImportKs() (accounts.Account, error){
+func GetAccountAndKs() (accounts.Account, *keystore.KeyStore, error) {
 	var files []string
 	fmt.Println("Files currently in keystore:")
 	root := "./keystores"
@@ -35,16 +37,15 @@ func ImportKs() (accounts.Account, error){
 		return nil
 	})
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	for _, file := range files {
-		fmt.Println(file)
+		fmt.Println(strings.TrimPrefix(file, "keystores/"))
 	}
 	fmt.Println("Which keystore do you want to unlock?")
 	fileName := accessories.UserInputLine()
 	file := fmt.Sprintf("./keystores/%s", fileName)
 	ks := keystore.NewKeyStore("./keystores", keystore.StandardScryptN, keystore.StandardScryptP)
-	//am := accounts.NewManager(&accounts.Config{InsecureUnlockAllowed: false}, ks)
 	jsonBytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
@@ -56,6 +57,6 @@ func ImportKs() (accounts.Account, error){
 		log.Fatal(err)
 	}
 	fmt.Println("Your address is:", impAcc.Address.Hex())
-	fmt.Println("Your key data is:", jsonBytes)
-	return impAcc, nil
+	//am := accounts.NewManager(&accounts.Config{InsecureUnlockAllowed: false}, ks)
+	return impAcc, ks, nil
 }

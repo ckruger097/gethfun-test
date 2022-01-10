@@ -1,15 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"gethfun/accessories"
 	"gethfun/accounts"
 	"gethfun/smart_contracts"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
-	"math/big"
 	"os"
-	"time"
 )
 
 func main() {
@@ -19,30 +19,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	smart_contracts.DeployEthCheck(client, "bababooie", big.NewFloat(1.0))
-
-	//_, err = transactions.SendRawTx(client)
 	//smart_contracts.DeploySmartContract(client)
-	//instance, err := smart_contracts.LoadSmartContract(client)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//smart_contracts.QuerySmartContract(instance)
-	//smart_contracts.WriteToSmartContract(client, instance, "bobo", "bear")
-	//smart_contracts.ReadSmartContract(instance, "bobo")
-
-	//txhash, err := transactions.TestToken(client)
-	//fmt.Println("Yay our Tx hash is:", txhash)
-
-	//myWallet := loadCreateWallet(client)
-
-	//success, err := transactions.SendTokenFlow(client)
-	//if success {
-	//	fmt.Println("\nNice!")
-	//}else{
-	//	log.Fatal(err)
-	//}
-
+	contract, err := smart_contracts.LoadSmartContract(client, "0xC25249Bb74dd83a0470A0df7e5C93BDaFFb300e9")
+	if err != nil {
+		log.Fatal(err)
+	}
+	ver, err := contract.Version(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(ver)
+	tx, err := smart_contracts.WriteToSmartContract(client, contract, "harry", "33")
+	if err != nil {
+		log.Fatal(err)
+	}
+	//time.Sleep(30)
+	receipt, err := bind.WaitMined(context.Background(), client, tx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(receipt.Status)
+	res, err := smart_contracts.ReadSmartContract(contract, "harry")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(res)
 }
 
 func loadCreateWallet(client *ethclient.Client) accounts.EthWallet {
@@ -56,6 +57,7 @@ func loadCreateWallet(client *ethclient.Client) accounts.EthWallet {
 	} else if response == "2" {
 		fmt.Println("Enter your private key")
 		pk := accessories.UserInputLine()
+		pk = fmt.Sprintf("0x%s", pk)
 		newWallet = accounts.LoadWallet(pk)
 	} else {
 		fmt.Println("Invalid! Aborting program (are you happy?)")
@@ -64,14 +66,4 @@ func loadCreateWallet(client *ethclient.Client) accounts.EthWallet {
 	address := accounts.GetCommonAddress(newWallet.WalletAddress)
 	accounts.PrintBalanceInfo(client, address)
 	return newWallet
-}
-
-func clientKeyStore() {
-	accy, err := accounts.CreateKs("okletsgo")
-	fmt.Println(accy)
-	time.Sleep(10000)
-	accy, err = accounts.ImportKs()
-	if err != nil {
-		log.Fatal(err)
-	}
 }
