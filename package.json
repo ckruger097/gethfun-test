@@ -5,7 +5,9 @@
   "license": "MIT",
   "dependencies": {
     "@chainsafe/truffle-plugin-abigen": "^0.0.2",
-    "@openzeppelin/contracts": "^4.3.0",
+    "@openzeppelin/contracts": "^4.4.1",
+    "flatten-sol": "^0.1.1",
+    "sol-merger": "^3.1.0",
     "truffle": "^5.4.6"
   }
 }

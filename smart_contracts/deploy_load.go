@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gethfun/accessories"
 	store "gethfun/build"
+	"gethfun/build/token"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -53,13 +54,22 @@ func DeploySmartContract(version string, client *ethclient.Client) {
 	_ = instance
 }
 
-func LoadSmartContract(client *ethclient.Client, contractAddress string) (*store.Store, error) {
+func LoadStore(client *ethclient.Client, contractAddress string) (*store.Store, error) {
 	address := common.HexToAddress(contractAddress) // the addr you get from deploy
 	instance, err := store.NewStore(address, client)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("store contract loaded")
+	return instance, nil
+}
 
-	fmt.Println("contract loaded")
+func LoadToken(client *ethclient.Client, contractAddress string) (*token.Token, error) {
+	address := common.HexToAddress(contractAddress)
+	instance, err := token.NewToken(address, client)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("token contract loaded")
 	return instance, nil
 }
