@@ -21,15 +21,23 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	mainneturl := accessories.GoDotEnvVariable("mainnet")
+	clientmain, err := ethclient.Dial(mainneturl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_ = clientwss
 	_ = client
+
+	event_logs.ReadERC20Log(clientmain, "0xE41d2489571d322189246DaFA5ebDe1F4699F498", big.NewInt(13991481), big.NewInt(13992163))
 
 	//contract, err := smart_contracts.LoadStore(client, accessories.GoDotEnvVariable("storeContract"))
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
 
-	event_logs.ReadStoreLog(clientwss, accessories.GoDotEnvVariable("storeContract"), big.NewInt(9964990),
-		big.NewInt(9974533))
+	//event_logs.ReadStoreLog(clientwss, accessories.GoDotEnvVariable("storeContract"), big.NewInt(9964990),
+	//	big.NewInt(9974533))
 }
 
 func loadCreateWallet(client *ethclient.Client) accounts.EthWallet {
